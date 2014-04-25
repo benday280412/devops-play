@@ -1,0 +1,55 @@
+{
+    "builders":[
+        {  
+            "type": "virtualbox-iso",  
+            "guest_os_type": "Ubuntu_64",
+            "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04-server-amd64.iso",
+            "iso_checksum": "01545fa976c8367b4f0d59169ac4866c",
+            "iso_checksum_type": "md5",
+            "http_directory": "preseed",
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "boot_wait":"10s",
+            "output_directory": "/tmp/ubuntu64_basebox_virtualbox",
+            "shutdown_command": "echo 'shutdown -P now' > shutdown.sh; echo 'vagrant'|sudo -S sh 'shutdown.sh'",
+            "boot_command": [
+                "<esc><wait>",
+                "<esc><wait>",
+                "<enter><wait>",
+                "/install/vmlinuz",
+                " auto",
+                " console-setup/ask_detect=false",
+                " console-setup/layoutcode=us",
+                " console-setup/modelcode=pc105",
+                " debconf/frontend=noninteractive",
+                " debian-installer=en_US",
+                " fb=false",
+                " initrd=/install/initrd.gz",
+                " kbd-chooser/method=us",
+                " keyboard-configuration/layout=USA",
+                " keyboard-configuration/variant=USA",
+                " locale=en_US",
+                " netcfg/get_domain=site",
+                " netcfg/get_hostname=vagrant",
+                " noapic",
+                " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
+                " -- <wait>",
+                "<enter><wait>"
+            ]
+        }
+    ],
+    "provisioners":[
+        {
+            "type": "shell",
+            "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+            "inline": [
+                "echo 'vagrant    ALL=(ALL)  NOPASSWD:ALL' >> /etc/sudoers; mkdir ~/.ssh; cd ~/.ssh; wget https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub; mv vagrant.pub authorized_keys; chmod 0700 authorized_keys;sudo apt-get -y update; sudo apt-get install -y puppet-common;sudo apt-get install -y ruby1.9.1-dev"
+            ]
+        },
+        {
+            "type": "puppet-masterless",
+            "manifest_file": "../puppet/manifests/default.pp"
+        }
+    ],
+    "post-processors":["vagrant"]
+}
