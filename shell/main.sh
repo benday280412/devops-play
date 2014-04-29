@@ -14,6 +14,8 @@ wget https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub
 mv vagrant.pub authorized_keys
 chmod 0700 authorized_keys
 chown vagrant:vagrant authorized_keys
+
+
 apt-get -y update
 #apt-get install -y puppet-common
 apt-get install -y ruby1.9.1-dev
@@ -42,17 +44,25 @@ else
   echo 'git found.'
 fi
 
+echo "Installing puppet gem"
+gem install puppet
+
 if [ ! -d "$PUPPET_DIR" ]; then
   mkdir -p $PUPPET_DIR
 fi
-cp /vagrant/puppet/Puppetfile $PUPPET_DIR
 
-if [ "$(gem search -i librarian-puppet)" = "false" ]; then
-  sudo gem install puppet
-  sudo gem install librarian-puppet
+  echo "Installing librarian-puppet gem"
+  echo "I am `id`"
+
+  cd $PUPPET_DIR
+  wget https://raw.githubusercontent.com/benday280412/devops-play/master/puppet/Puppetfile
+  gem install librarian-puppet
   cd $PUPPET_DIR && librarian-puppet install --clean
-else
-  cd $PUPPET_DIR && librarian-puppet update
-fi
 
 
+#if [ "$(gem search -i librarian-puppet)" = "false" ]; then
+# 
+#else
+#  echo "Not gem search -i librarian-puppet"
+  #cd $PUPPET_DIR && librarian-puppet update
+#fi

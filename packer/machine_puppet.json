@@ -25,13 +25,9 @@
     ],
     "provisioners":[
         {
-            "type": "shell",
-            "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
-            "script":"shell/main.sh"
-        },
-        {
             "type": "puppet-masterless",
-            "manifest_file": "puppet/manifests/default.pp"
+            "manifest_file": "puppet/manifests/default.pp",
+            "execute_command":"{{.FacterVars}}{{if .Sudo}} sudo -E {{end}}puppet apply --verbose {{if ne .HieraConfigPath ""}}--hiera_config='{{.HieraConfigPath}}' {{end}} {{if ne .ManifestDir ""}}--manifestdir='{{.ManifestDir}}' {{end}} --detailed-exitcodes {{.ManifestFile}}"
         }
     ],
     "post-processors":["vagrant"]

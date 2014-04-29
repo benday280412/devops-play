@@ -1,0 +1,14 @@
+target
+.idea
+.DS_Store
+.classpath
+.project
+.settings
+.checkstyle
+*.log
+.springBeans
+.metadata
+.sass-cache
+.vagrant
+packer_cache
+packer/packer_virtualbox-iso_virtualbox.box

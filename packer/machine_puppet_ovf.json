@@ -1,0 +1,29 @@
+{
+    "variables": {
+    },
+
+    "builders":[
+        {  
+            "type": "virtualbox-ovf",  
+            "source_path":"ovf/box.ovf",
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "boot_wait":"10s",
+            "output_directory": "/tmp/ubuntu64_basebox_virtualbox",
+            "shutdown_command": "echo 'shutdown -P now' > shutdown.sh; echo 'vagrant'|sudo -S sh 'shutdown.sh'"
+        }
+    ],
+    "provisioners":[
+        {
+            "execute_command":"echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+            "type": "shell",
+            "script":"shell/main.sh"
+        },
+        {
+            "type": "puppet-masterless",
+            "manifest_file": "puppet/manifests/default.pp",
+            "execute_command":"sudo -E puppet apply --verbose --detailed-exitcodes {{.ManifestFile}}"
+        }
+    ],
+    "post-processors":["vagrant"]
+}
