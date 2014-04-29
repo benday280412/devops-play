@@ -1,7 +1,7 @@
 {
     "builders":[
-        {  
-            "type": "virtualbox-iso",  
+        {
+            "type": "virtualbox-iso",
             "guest_os_type": "Ubuntu_64",
             "iso_url": "http://releases.ubuntu.com/12.04/ubuntu-12.04.4-server-amd64.iso",
             "iso_checksum": "3aeb42816253355394897ae80d99a9ba56217c0e98e05294b51f0f5b13bceb54",
@@ -25,9 +25,14 @@
     ],
     "provisioners":[
         {
+            "execute_command":"echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+            "type": "shell",
+            "script":"shell/main.sh"
+        },
+        {
             "type": "puppet-masterless",
             "manifest_file": "puppet/manifests/default.pp",
-            "execute_command":"{{.FacterVars}}{{if .Sudo}} sudo -E {{end}}puppet apply --verbose {{if ne .HieraConfigPath ""}}--hiera_config='{{.HieraConfigPath}}' {{end}} {{if ne .ManifestDir ""}}--manifestdir='{{.ManifestDir}}' {{end}} --detailed-exitcodes {{.ManifestFile}}"
+            "execute_command":"sudo -E puppet apply --verbose --detailed-exitcodes {{.ManifestFile}}"
         }
     ],
     "post-processors":["vagrant"]

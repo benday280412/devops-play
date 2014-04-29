@@ -11,4 +11,4 @@ target
 .sass-cache
 .vagrant
 packer_cache
-packer/packer_virtualbox-iso_virtualbox.box
+.box

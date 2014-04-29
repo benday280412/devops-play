@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "benday280412/test"
   config.vm.network "forwarded_port", guest: 8080, host: 8888, host_ip: "0.0.0.0"
 
-  # set auto_update to false, if you do NOT want to check the correct 
+  # set auto_update to false, if you do NOT want to check the correct
   # additions version when booting this machine
   config.vbguest.auto_update = true
 
@@ -84,10 +84,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   #config.vm.provision :shell, :path => "shell/main.sh"
 
-  #config.vm.provision "puppet" do |puppet|
-  #  puppet.manifests_path = "puppet/manifests"
-    #puppet.manifest_file  = "default.pp"
-  #end
+  config.vm.provision "puppet" do |puppet|
+    puppet.manifests_path = "puppet/manifests"
+    puppet.manifest_file  = "default.pp"
+  end
 
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding

@@ -1,7 +1,7 @@
 {
     "builders":[
-        {  
-            "type": "virtualbox-iso",  
+        {
+            "type": "virtualbox-iso",
             "guest_os_type": "Ubuntu_64",
             "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04-server-amd64.iso",
             "iso_checksum": "01545fa976c8367b4f0d59169ac4866c",
@@ -32,7 +32,7 @@
                 " netcfg/get_domain=site",
                 " netcfg/get_hostname=vagrant",
                 " noapic",
-                " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
+                " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed_trusty.cfg",
                 " -- <wait>",
                 "<enter><wait>"
             ]
@@ -40,15 +40,14 @@
     ],
     "provisioners":[
         {
+            "execute_command":"echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
             "type": "shell",
-            "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
-            "inline": [
-                "echo 'vagrant    ALL=(ALL)  NOPASSWD:ALL' >> /etc/sudoers; mkdir ~/.ssh; cd ~/.ssh; wget https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub; mv vagrant.pub authorized_keys; chmod 0700 authorized_keys;sudo apt-get -y update; sudo apt-get install -y puppet-common;sudo apt-get install -y ruby1.9.1-dev"
-            ]
+            "script":"shell/main.sh"
         },
         {
             "type": "puppet-masterless",
-            "manifest_file": "../puppet/manifests/default.pp"
+            "manifest_file": "puppet/manifests/default.pp",
+            "execute_command":"sudo -E puppet apply --verbose --detailed-exitcodes {{.ManifestFile}}"
         }
     ],
     "post-processors":["vagrant"]
